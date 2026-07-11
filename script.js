@@ -133,4 +133,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {
         window.lucide.createIcons();
     }
+
+    // -------------------------------------------------
+    // 7. Global Scroll Animations
+    // -------------------------------------------------
+    const animateElements = document.querySelectorAll('.animate-on-scroll');
+    if (animateElements.length > 0) {
+        const scrollObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show-animate');
+                    // Unobserve after animating once to prevent re-animating on scroll up
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px 0px -15% 0px',
+            threshold: 0.1
+        });
+
+        animateElements.forEach(el => scrollObserver.observe(el));
+    }
 });

@@ -11,6 +11,144 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Bento Box Grid for Certificates */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 280px;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .bento-item {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .bento-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border-color: var(--accent);
+        }
+        
+        .bento-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0.8;
+            transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        
+        .bento-item:hover img {
+            opacity: 0.25;
+            transform: scale(1.08);
+        }
+        
+        .bento-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px;
+            background: linear-gradient(to top, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.8) 50%, transparent 100%);
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+        }
+        
+        .bento-item:hover .bento-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .bento-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+        
+        .bento-issuer {
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        
+        .bento-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(var(--accent-rgb), 0.15);
+            color: var(--accent);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8) rotate(-15deg);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(4px);
+        }
+        
+        .bento-item:hover .bento-icon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+        
+        /* Grid spans for asymmetric Bento layout */
+        .bento-large { 
+            grid-column: span 2; 
+            grid-row: span 2; 
+        }
+        .bento-large .bento-title { font-size: 1.8rem; }
+        
+        .bento-wide { 
+            grid-column: span 2; 
+            grid-row: span 1; 
+        }
+        .bento-wide .bento-title { font-size: 1.4rem; }
+        
+        .bento-tall { 
+            grid-column: span 1; 
+            grid-row: span 2; 
+        }
+        
+        .bento-small { 
+            grid-column: span 1; 
+            grid-row: span 1; 
+        }
+        
+        @media (max-width: 992px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 240px; }
+            .bento-tall { grid-column: span 1; grid-row: span 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+            .bento-large, .bento-wide, .bento-tall, .bento-small { grid-column: span 1; grid-row: span 1; }
+            .bento-item img { opacity: 0.4; } /* Always show some overlay on mobile */
+            .bento-content { opacity: 1; transform: translateY(0); background: linear-gradient(to top, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.6) 70%, transparent 100%); }
+            .bento-icon { display: none; }
+        }
+    </style>
 </head>
 <body class="dark-theme">
     <header class="navbar" id="navbar">
@@ -47,7 +185,7 @@
     <main style="padding-top: calc(var(--navbar-height) + 40px); min-height: calc(100vh - 120px);">
         <section class="certifications-page-section">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header animate-on-scroll fade-in-up">
                     <span class="badge">Professional Growth</span>
                     <h1 class="section-title">My Certifications</h1>
                     <div class="section-line"></div>
@@ -57,90 +195,72 @@
                     Verified Cisco Networking Academy and Python Institute credentials completed through Francis Xavier Engineering College.
                 </p>
 
-                <div class="cert-gallery">
-                    <article class="cert-gallery-card">
-                        <a href="certificates/python-essentials-1.png" target="_blank" rel="noopener noreferrer" class="cert-image-link">
-                            <img src="certificates/python-essentials-1.png" alt="Python Essentials 1 certificate" class="cert-image" loading="lazy">
-                        </a>
-                        <div class="cert-gallery-content">
-                            <h3 class="cert-gallery-title">Python Essentials 1</h3>
-                            <p class="cert-gallery-issuer">Cisco Networking Academy · Python Institute</p>
-                            <div class="cert-gallery-meta">
-                                <span><strong>Issued:</strong> 10 Jun 2026</span>
-                                <span><strong>ID:</strong> 73a0ca03-de1c-470a-a027-28f362fd88cd</span>
-                            </div>
+                <div class="bento-grid">
+                    <!-- Bento Box 1: Large Feature -->
+                    <a href="certificates/python-essentials-1.png" target="_blank" rel="noopener noreferrer" class="bento-item animate-on-scroll scale-in bento-large">
+                        <img src="certificates/python-essentials-1.png" alt="Python Essentials 1 certificate" loading="lazy">
+                        <div class="bento-icon"><i data-lucide="award"></i></div>
+                        <div class="bento-content">
+                            <h3 class="bento-title">Python Essentials 1</h3>
+                            <p class="bento-issuer">Cisco Networking Academy · Python Institute</p>
+                            <span class="cert-gallery-meta" style="color: var(--text-muted); font-size: 0.8rem;">10 Jun 2026</span>
                         </div>
-                    </article>
+                    </a>
 
-                    <article class="cert-gallery-card">
-                        <a href="certificates/introduction-to-data-science.png" target="_blank" rel="noopener noreferrer" class="cert-image-link">
-                            <img src="certificates/introduction-to-data-science.png" alt="Introduction to Data Science certificate" class="cert-image" loading="lazy">
-                        </a>
-                        <div class="cert-gallery-content">
-                            <h3 class="cert-gallery-title">Introduction to Data Science</h3>
-                            <p class="cert-gallery-issuer">Cisco Networking Academy</p>
-                            <div class="cert-gallery-meta">
-                                <span><strong>Issued:</strong> 13 Jun 2026</span>
-                                <span><strong>ID:</strong> 32cf4430-c05f-4881-9849-363954eb07d2</span>
-                            </div>
+                    <!-- Bento Box 2: Tall -->
+                    <a href="certificates/ccna-introduction-to-networks.png" target="_blank" rel="noopener noreferrer" class="bento-item animate-on-scroll scale-in bento-tall">
+                        <img src="certificates/ccna-introduction-to-networks.png" alt="CCNA Introduction to Networks certificate" loading="lazy">
+                        <div class="bento-icon"><i data-lucide="network"></i></div>
+                        <div class="bento-content">
+                            <h3 class="bento-title">CCNA: Introduction to Networks</h3>
+                            <p class="bento-issuer">Cisco Networking Academy</p>
+                            <span class="cert-gallery-meta" style="color: var(--text-muted); font-size: 0.8rem;">13 Jun 2026</span>
                         </div>
-                    </article>
+                    </a>
 
-                    <article class="cert-gallery-card">
-                        <a href="certificates/ccna-introduction-to-networks.png" target="_blank" rel="noopener noreferrer" class="cert-image-link">
-                            <img src="certificates/ccna-introduction-to-networks.png" alt="CCNA Introduction to Networks certificate" class="cert-image" loading="lazy">
-                        </a>
-                        <div class="cert-gallery-content">
-                            <h3 class="cert-gallery-title">CCNA: Introduction to Networks</h3>
-                            <p class="cert-gallery-issuer">Cisco Networking Academy</p>
-                            <div class="cert-gallery-meta">
-                                <span><strong>Issued:</strong> 13 Jun 2026</span>
-                                <span><strong>ID:</strong> d8e6cb05-6a4f-4580-9353-e52ce7f432a4</span>
-                            </div>
+                    <!-- Bento Box 3: Small -->
+                    <a href="certificates/introduction-to-data-science.png" target="_blank" rel="noopener noreferrer" class="bento-item animate-on-scroll scale-in bento-small">
+                        <img src="certificates/introduction-to-data-science.png" alt="Introduction to Data Science certificate" loading="lazy">
+                        <div class="bento-icon"><i data-lucide="database"></i></div>
+                        <div class="bento-content">
+                            <h3 class="bento-title">Introduction to Data Science</h3>
+                            <p class="bento-issuer">Cisco Networking Academy</p>
+                            <span class="cert-gallery-meta" style="color: var(--text-muted); font-size: 0.8rem;">13 Jun 2026</span>
                         </div>
-                    </article>
+                    </a>
 
-                    <article class="cert-gallery-card">
-                        <a href="certificates/introduction-to-modern-ai.png" target="_blank" rel="noopener noreferrer" class="cert-image-link">
-                            <img src="certificates/introduction-to-modern-ai.png" alt="Introduction to Modern AI certificate" class="cert-image" loading="lazy">
-                        </a>
-                        <div class="cert-gallery-content">
-                            <h3 class="cert-gallery-title">Introduction to Modern AI</h3>
-                            <p class="cert-gallery-issuer">Cisco Networking Academy</p>
-                            <div class="cert-gallery-meta">
-                                <span><strong>Issued:</strong> 13 Jun 2026</span>
-                                <span><strong>ID:</strong> 028a2a52-aa49-47d5-ad39-605023a75f41</span>
-                            </div>
+                    <!-- Bento Box 4: Small -->
+                    <a href="certificates/introduction-to-modern-ai.png" target="_blank" rel="noopener noreferrer" class="bento-item animate-on-scroll scale-in bento-small">
+                        <img src="certificates/introduction-to-modern-ai.png" alt="Introduction to Modern AI certificate" loading="lazy">
+                        <div class="bento-icon"><i data-lucide="cpu"></i></div>
+                        <div class="bento-content">
+                            <h3 class="bento-title">Introduction to Modern AI</h3>
+                            <p class="bento-issuer">Cisco Networking Academy</p>
+                            <span class="cert-gallery-meta" style="color: var(--text-muted); font-size: 0.8rem;">13 Jun 2026</span>
                         </div>
-                    </article>
+                    </a>
 
-                    <article class="cert-gallery-card">
-                        <a href="certificates/apply-ai-customer-reviews.png" target="_blank" rel="noopener noreferrer" class="cert-image-link">
-                            <img src="certificates/apply-ai-customer-reviews.png" alt="Apply AI Analyze Customer Reviews certificate" class="cert-image" loading="lazy">
-                        </a>
-                        <div class="cert-gallery-content">
-                            <h3 class="cert-gallery-title">Apply AI: Analyze Customer Reviews</h3>
-                            <p class="cert-gallery-issuer">Cisco Networking Academy</p>
-                            <div class="cert-gallery-meta">
-                                <span><strong>Issued:</strong> 13 Jun 2026</span>
-                                <span><strong>ID:</strong> 49820b46-5538-4897-bcd4-695db2f89a60</span>
-                            </div>
+                    <!-- Bento Box 5: Wide -->
+                    <a href="certificates/apply-ai-customer-reviews.png" target="_blank" rel="noopener noreferrer" class="bento-item animate-on-scroll scale-in bento-wide">
+                        <img src="certificates/apply-ai-customer-reviews.png" alt="Apply AI Analyze Customer Reviews certificate" loading="lazy">
+                        <div class="bento-icon"><i data-lucide="bot"></i></div>
+                        <div class="bento-content">
+                            <h3 class="bento-title">Apply AI: Analyze Customer Reviews</h3>
+                            <p class="bento-issuer">Cisco Networking Academy</p>
+                            <span class="cert-gallery-meta" style="color: var(--text-muted); font-size: 0.8rem;">13 Jun 2026</span>
                         </div>
-                    </article>
+                    </a>
 
-                    <article class="cert-gallery-card">
-                        <a href="certificates/ccna-enterprise-networking.png" target="_blank" rel="noopener noreferrer" class="cert-image-link">
-                            <img src="certificates/ccna-enterprise-networking.png" alt="CCNA Enterprise Networking Security and Automation certificate" class="cert-image" loading="lazy">
-                        </a>
-                        <div class="cert-gallery-content">
-                            <h3 class="cert-gallery-title">CCNA: Enterprise Networking, Security, and Automation</h3>
-                            <p class="cert-gallery-issuer">Cisco Networking Academy</p>
-                            <div class="cert-gallery-meta">
-                                <span><strong>Issued:</strong> 13 Jun 2026</span>
-                                <span><strong>ID:</strong> d8f16b2f-51cc-4de9-9d7d-da5e930afb96</span>
-                            </div>
+                    <!-- Bento Box 6: Wide -->
+                    <a href="certificates/ccna-enterprise-networking.png" target="_blank" rel="noopener noreferrer" class="bento-item animate-on-scroll scale-in bento-wide">
+                        <img src="certificates/ccna-enterprise-networking.png" alt="CCNA Enterprise Networking Security and Automation certificate" loading="lazy">
+                        <div class="bento-icon"><i data-lucide="shield-check"></i></div>
+                        <div class="bento-content">
+                            <h3 class="bento-title">CCNA: Enterprise Networking, Security</h3>
+                            <p class="bento-issuer">Cisco Networking Academy</p>
+                            <span class="cert-gallery-meta" style="color: var(--text-muted); font-size: 0.8rem;">13 Jun 2026</span>
                         </div>
-                    </article>
+                    </a>
                 </div>
             </div>
         </section>
